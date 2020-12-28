@@ -11,6 +11,7 @@ namespace Persistance
         }
 
         public DbSet<WeatherForecast> WeatherForecast {get; set;}
+        public DbSet<Tool> Tools {get; set;}
 
 
         protected override void OnModelCreating(ModelBuilder builder)
