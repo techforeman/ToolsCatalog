@@ -8,13 +8,15 @@ interface IProps {
   tool: ITool;
   createTool: (tool: ITool) => void;
   editTool: (tool: ITool) => void;
+  submitting:boolean;
 }
 
 const ToolForm: React.FC<IProps> = ({
   setEditMode,
   tool: initialFormState,
   createTool,
-  editTool
+  editTool,
+  submitting
 }) => {
   const initialForm = () => {
     if (initialFormState) {
@@ -85,7 +87,7 @@ const ToolForm: React.FC<IProps> = ({
           placeholder="Created By"
           value={tool.createdBy}
         />
-        <Button floated="right" positive type="submit" content="Submit" />
+        <Button loading={submitting} floated="right" positive type="submit" content="Submit" />
         <Button
           onClick={() => setEditMode(false)}
           floated="right"

@@ -7,13 +7,14 @@ interface IProps {
     tools: ITool[];
     selectTool: (id: string) => void;
     deleteTool:(id: string) => void;
+    submitting:boolean;
 }
 
-const ToolList: React.FC<IProps> = ({ tools, selectTool, deleteTool }) => {
+const ToolList: React.FC<IProps> = ({ tools, selectTool, deleteTool, submitting }) => {
     return (
         <Segment clearing>
             <Item.Group divided>
-                {tools.map(tool => (
+                {tools && tools.map(tool => (
                     <Item key={tool.id}>
                     <Item.Content>
                         <Item.Header as='a'>{tool.name}</Item.Header>
@@ -23,7 +24,7 @@ const ToolList: React.FC<IProps> = ({ tools, selectTool, deleteTool }) => {
                             <div>{tool.category}</div>
                         </Item.Description>
                         <Item.Extra>
-                            <Button onClick={() => deleteTool(tool.id)} floated='right' content='Delete' color='red' />
+                            <Button loading={submitting} onClick={() => deleteTool(tool.id)} floated='right' content='Delete' color='red' />
                             <Button onClick={() => selectTool(tool.id)} floated='right' content='View' color='blue' />
                             <Label basic content='Category' />
                         </Item.Extra>

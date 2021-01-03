@@ -15,6 +15,7 @@ interface IProps {
   createTool: (tool: ITool) => void;
   editTool: (tool: ITool) => void;
   deleteTool:(id: string) => void;
+  submitting:boolean;
 }
 
 const ToolDashboard: React.FC<IProps> = ({
@@ -26,12 +27,13 @@ const ToolDashboard: React.FC<IProps> = ({
   setSelectedTool,
   createTool,
   editTool,
-  deleteTool
+  deleteTool,
+  submitting
 }) => {
   return (
     <Grid>
       <Grid.Column width={10}>
-        <ToolList tools={tools} selectTool={selectTool}  deleteTool={deleteTool}/>
+        <ToolList tools={tools} selectTool={selectTool}  deleteTool={deleteTool} submitting={submitting}/>
       </Grid.Column>
       <Grid.Column width={6}>
         {selectedTool && !editMode && (
@@ -48,6 +50,7 @@ const ToolDashboard: React.FC<IProps> = ({
             tool={selectedTool!}
             editTool={editTool}
             createTool={createTool}
+            submitting={submitting}
           />
         )}
       </Grid.Column>
