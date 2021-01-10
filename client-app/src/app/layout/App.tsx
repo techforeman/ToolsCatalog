@@ -1,88 +1,38 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { Fragment } from "react";
 import { Container } from "semantic-ui-react";
-import { ITool } from "../models/tool";
 import NavBar from "../../features/nav/NavBar";
 import ToolDashboard from "../../features/tools/dashboard/ToolDashboard";
-import agent from "../api/agent";
-import LoadingComponents from "./LoadingComponents";
+import { Route, RouteComponentProps, withRouter } from "react-router-dom";
+import HomePage from "../../features/home/HomePage";
+import ToolForm from "../../features/tools/form/ToolForm";
+import ToolDetails from "../../features/tools/details/ToolDetails";
+import { observer } from "mobx-react-lite";
 
-const App = () => {
-  const [tools, setTools] = useState<ITool[]>([]);
-  const [selectedTool, setSelectedTool] = useState<ITool | null>(null);
-  const [editMode, setEditMode] = useState(false);
-const [loading, setLoading] = useState(true);
-const [submitting, setSubmitting] = useState(false);
-
-  const handleSelectTool = (id: string) => {
-    setSelectedTool(tools.filter((a) => a.id === id)[0]);
-    setEditMode(false);
-  };
-
-  const handleOpenCreateForm = () => {
-    setSelectedTool(null);
-    setEditMode(true);
-  }
-
-  const handleCreateTool = (tool: ITool) => {
-    setSubmitting(true);
-    agent.Tools.create(tool).then(() => {
-      setTools([...tools, tool]);
-    setSelectedTool(tool);
-    setEditMode(false);
-    }).then(() => setSubmitting(false))
-    
-  }
-
-  const handleEditTool = (tool: ITool) => {
-    setSubmitting(true);
-    agent.Tools.update(tool).then(() => {
-      setTools([...tools.filter(a => a.id !== tool.id), tool]);
-    setSelectedTool(tool);
-    setEditMode(false);
-    }).then(() => setSubmitting(false))
-    
-  }
-
-  const handleDeleteTool = (id: string) => {
-    setSubmitting(true);
-    agent.Tools.delete(id).then(() => {
-      setTools([...tools.filter(a => a.id !== id)]);
-    }).then(() => setSubmitting(false))
-    
-  }
-  useEffect(() => {
-    agent.Tools.list()
-      .then(response => {
-        let tools: ITool[] = [];
-        response.forEach((tool) => {
-          tool.createdOn = tool.createdOn.split('/')[0];
-          tools.push(tool);
-        })
-        setTools(tools);
-      }).then(() => setLoading(false));
-  }, []);
-
-  if(loading) return <LoadingComponents content='Loading tools...' /> 
+const App: React.FC<RouteComponentProps> = ({ location }) => {
+  
 
   return (
     <Fragment>
-      <NavBar openCreateForm={handleOpenCreateForm} />
-      <Container style={{ marginTop: "7em" }}>
-        <ToolDashboard
-          tools={tools}
-          selectTool={handleSelectTool}
-          selectedTool={selectedTool!}
-          editMode={editMode}
-          setEditMode={setEditMode}
-          setSelectedTool={setSelectedTool}
-          createTool={handleCreateTool}
-          editTool={handleEditTool}
-          deleteTool={handleDeleteTool}
-          submitting={submitting}
-        />
-      </Container>
+      <Route exact path="/" component={HomePage} />
+      <Route
+        path={"/(.+)"}
+        render={() => (
+          <Fragment>
+            <NavBar />
+            <Container style={{ marginTop: "7em" }}>
+              <Route exact path="/tools" component={ToolDashboard} />
+              <Route path="/tools/:id" component={ToolDetails} />
+              <Route
+                key={location.key}
+                path={["/createTool", "/manage/:id"]}
+                component={ToolForm}
+              />
+            </Container>
+          </Fragment>
+        )}
+      />
     </Fragment>
   );
 };
 
-export default App;
+export default withRouter(observer(App));

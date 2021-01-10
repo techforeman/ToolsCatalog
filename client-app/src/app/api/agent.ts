@@ -24,6 +24,4 @@ const Tools = {
     delete: (id: string) => requests.del(`/tools/${id}`)
 }
 
-export default {
-    Tools
-}
+export default ({Tools})
