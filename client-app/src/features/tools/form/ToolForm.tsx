@@ -1,5 +1,5 @@
 import React, { FormEvent, useContext, useEffect, useState } from "react";
-import { Button, Form, Segment } from "semantic-ui-react";
+import { Button, Form, Grid, Segment } from "semantic-ui-react";
 import { ITool } from "../../../app/models/tool";
 import { v4 as uuid } from "uuid";
 import ToolStore from "../../../app/stores/toolStore";
@@ -62,7 +62,9 @@ const ToolForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, history 
   };
 
   return (
-    <Segment clearing>
+    <Grid>
+      <Grid.Column width={10}>
+      <Segment clearing>
       <Form onSubmit={handleSubmit}>
         <Form.Input
           onChange={handleInputChange}
@@ -111,6 +113,9 @@ const ToolForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, history 
         />
       </Form>
     </Segment>
+      </Grid.Column>
+    </Grid>
+    
   );
 };
 export default observer(ToolForm);
