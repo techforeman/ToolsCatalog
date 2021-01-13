@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using MediatR;
 using Persistance;
 
@@ -25,7 +27,7 @@ namespace Application.Tools
             {
                 var tool = await _context.Tools.FindAsync(request.Id);
                 if (tool == null)
-                    throw new Exception("Could not find that tool");
+                    throw new RestException(HttpStatusCode.NotFound, new {tool = "Not found"});
                 _context.Remove(tool);
                 var success = await _context.SaveChangesAsync() > 0;
 

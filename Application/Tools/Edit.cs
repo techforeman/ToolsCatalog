@@ -1,6 +1,9 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
+using FluentValidation;
 using MediatR;
 using Persistance;
 
@@ -18,6 +21,18 @@ namespace Application.Tools
             public string CreatedBy { get; set; }
         }
 
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Name).NotEmpty();
+                RuleFor(x => x.Description).NotEmpty();
+                RuleFor(x => x.Category).NotEmpty();
+                RuleFor(x => x.CreatedBy).NotEmpty();
+                RuleFor(x => x.CreatedOn).NotEmpty();
+            }
+        }
+
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
@@ -29,8 +44,8 @@ namespace Application.Tools
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
                 var tool = await _context.Tools.FindAsync(request.Id);
-                if(tool == null)
-                    throw new Exception("Could not find that tool");
+                  if (tool == null)
+                    throw new RestException(HttpStatusCode.NotFound, new {tool = "Not found"});
                 tool.Name = request.Name ?? tool.Name;
                 tool.Description = request.Description ?? tool.Description;
                 tool.Category = request.Category ?? tool.Category;

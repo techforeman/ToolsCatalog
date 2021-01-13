@@ -24,7 +24,6 @@ namespace Application.Tools
 
             public async Task<List<Tool>> Handle(Query request, CancellationToken cancellationToken)
             {
-                
 
                 var tools = await _context.Tools.ToListAsync();
                 return tools;

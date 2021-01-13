@@ -25,11 +25,14 @@ const ToolDetails: React.FC<RouteComponentProps<DetailParams>> = ({
   } = toolStore;
 
   useEffect(() => {
-    loadTool(match.params.id);
-  }, [loadTool, match.params.id]);
+    loadTool(match.params.id)
+  }, [loadTool, match.params.id, history]);
 
-  if (loadingInitial || !tool)
+  if (loadingInitial)
     return <LoadingComponents content="Loading tool..." />;
+
+    if(!tool)
+      return <h2> Tool is not found</h2>
 
   return (
     <Grid>

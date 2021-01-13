@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Persistance;
 
@@ -20,6 +21,18 @@ namespace Application.Tools
             public string CreatedBy { get; set; }
 
 
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Name).NotEmpty();
+                RuleFor(x => x.Description).NotEmpty();
+                RuleFor(x => x.Category).NotEmpty();
+                RuleFor(x => x.CreatedBy).NotEmpty();
+                RuleFor(x => x.CreatedOn).NotEmpty();
+            }
         }
 
         public class Handler : IRequestHandler<Command>
