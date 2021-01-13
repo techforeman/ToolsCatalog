@@ -14,8 +14,8 @@ namespace API.Middleware
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
         public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
-            this._logger = logger;
-            this._next = next;
+            _logger = logger;
+            _next = next;
 
         }
 
