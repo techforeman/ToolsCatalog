@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { Segment, Grid, Icon } from 'semantic-ui-react'
@@ -22,7 +23,7 @@ import { ITool } from '../../../app/models/tool'
               <Icon name='calendar' size='large' color='teal' />
             </Grid.Column>
             <Grid.Column width={15}>
-            <span>Created on: {tool.category}</span>
+            <span>Created on: {format(tool.createdOn, 'eee do MMMM')}</span>
             </Grid.Column>
           </Grid>
         </Segment>

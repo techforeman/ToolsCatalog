@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import {
   observable,
   action,
@@ -7,6 +8,8 @@ import {
   runInAction,
 } from "mobx";
 import { createContext, SyntheticEvent } from "react";
+import { toast } from "react-toastify";
+import { history } from "../..";
 import agent from "../api/agent";
 import { ITool } from "../models/tool";
 
@@ -28,10 +31,10 @@ class ToolStore {
 
   groupToolsByCreatedOnDate(tools: ITool[]) {
     const sortedTool = tools.sort(
-      (a, b) => Date.parse(a.createdOn) - Date.parse(b.createdOn)
+      (a, b) => a.createdOn.getTime() - b.createdOn.getTime()
     )
     return Object.entries(sortedTool.reduce((tools, tool) => {
-      const createOn = tool.createdOn.split('T')[0];
+      const createOn = format(tool.createdOn, 'eee do MMMM');  //tool.createdOn.toString().split('T')[0];
       tools[createOn] = tools[createOn] ? [...tools[createOn], tool] : [tool];
       return tools;
     }, {} as {[key: string]: ITool[]}));
@@ -43,7 +46,7 @@ class ToolStore {
       const tools = await agent.Tools.list();
       runInAction(() => {
         tools.forEach((tool) => {
-          tool.createdOn = tool.createdOn.split("/")[0];
+          tool.createdOn = new Date(tool.createdOn);
           this.toolRegistry.set(tool.id, tool);
         });
         this.loadingInitial = false;
@@ -64,10 +67,12 @@ class ToolStore {
         this.toolRegistry.set(tool.id, tool);
         this.submitting = false;
       });
+      history.push(`/tools/${tool.id}`);
     } catch (error) {
       runInAction(() => {
         this.submitting = false;
       });
+      toast.error('Problem submitiing data')
       console.log(error);
     }
   };
@@ -81,6 +86,7 @@ class ToolStore {
         this.tool = tool;
         this.submitting = false;
       });
+      history.push(`/tools/${tool.id}`);
     } catch (error) {
       runInAction(() => {
         this.submitting = false;
@@ -115,14 +121,19 @@ class ToolStore {
     let tool = this.getTool(id);
     if (tool) {
       this.tool = tool;
+      return tool;
+
     } else {
       this.loadingInitial = true;
       try {
         tool = await agent.Tools.details(id);
         runInAction(() => {
+          tool.createOn = new Date(tool.createOn);
           this.tool = tool;
+          this.toolRegistry.set(tool.id, tool);
           this.loadingInitial = false;
         });
+        return tool;
       } catch (error) {
         runInAction(() => {
           this.loadingInitial = false;

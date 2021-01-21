@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Icon, Item,  Segment } from "semantic-ui-react";
 import { ITool } from "../../../app/models/tool";
+import {format} from 'date-fns';
 
 const ToolListItem: React.FC<{ tool: ITool }> = ({ tool }) => {
   return (
@@ -20,7 +21,7 @@ const ToolListItem: React.FC<{ tool: ITool }> = ({ tool }) => {
         </Item.Group>
       </Segment>
       <Segment>
-          <Icon name='clock'/> {tool.createdOn}
+          <Icon name='clock'/> {format(tool.createdOn, 'h:mm a')}
           <Icon name='user'/> {tool.createdBy}
       </Segment>
       <Segment secondary>User will check it</Segment>

@@ -23,6 +23,7 @@ axios.interceptors.response.use(undefined, error => {
     {
         toast.error('Server error - please check terminal for more information about that issue.')
     }
+    throw error;
 })
 
 const responseBody = (response: AxiosResponse) => response.data;

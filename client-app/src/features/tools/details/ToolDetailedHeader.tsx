@@ -1,5 +1,7 @@
+import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react'
+import { Link } from 'react-router-dom';
 import { Segment, Item, Header, Button, Image } from 'semantic-ui-react'
 import { ITool } from '../../../app/models/tool';
 
@@ -32,7 +34,7 @@ const toolImageStyle = {
                     content={tool.name}
                     style={{ color: 'white' }}
                   />
-                  <p>{tool.createdOn}</p>
+                  <p>{format(tool.createdOn, 'eee do MMMM')}</p>
                   <p>
                     Hosted by <strong>rojan</strong>
                   </p>
@@ -44,7 +46,7 @@ const toolImageStyle = {
         <Segment clearing attached='bottom'>
           <Button color='teal'>Participate in creation of Tool</Button>
           <Button>Stop creating Tool</Button>
-          <Button color='orange' floated='right'>
+          <Button as={Link} to={`/manage/${tool.id}`}color='orange' floated='right'>
             Manage Tool
           </Button>
         </Segment>
