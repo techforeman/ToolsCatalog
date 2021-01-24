@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from "react";
 import {  RouteComponentProps } from "react-router-dom";
 import {  Grid } from "semantic-ui-react";
 import LoadingComponents from "../../../app/layout/LoadingComponents";
-import ToolStore from "../../../app/stores/toolStore";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 import ToolDetailedChat from "./ToolDetailedChat";
 import ToolDetailedHeader from "./ToolDetailedHeader";
 import ToolDetailedInfo from "./ToolDetailedInfo";
@@ -17,12 +17,12 @@ const ToolDetails: React.FC<RouteComponentProps<DetailParams>> = ({
   match,
   history
 }) => {
-  const toolStore = useContext(ToolStore);
+  const rootStore = useContext(RootStoreContext);
   const {
     tool,
     loadTool,
     loadingInitial,
-  } = toolStore;
+  } = rootStore.toolStore;
 
   useEffect(() => {
     loadTool(match.params.id)

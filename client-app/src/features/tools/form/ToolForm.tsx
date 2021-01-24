@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, Grid, Segment } from "semantic-ui-react";
 import {  ToolFormValues } from "../../../app/models/tool";
 import { v4 as uuid } from "uuid";
-import ToolStore from "../../../app/stores/toolStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import { Form as FinalForm, Field } from "react-final-form";
@@ -13,6 +12,7 @@ import SelectInput from "../../../app/common/form/SelectInput";
 import DateInput from "../../../app/common/form/DateInput";
 import { combineDateAndTime } from "../../../app/common/util/util";
 import { combineValidators, composeValidators, isRequired, hasLengthGreaterThan} from 'revalidate';
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 
 const validate = combineValidators({
@@ -33,13 +33,13 @@ const ToolForm: React.FC<RouteComponentProps<DetailParams>> = ({
   match,
   history,
 }) => {
-  const toolStore = useContext(ToolStore);
+  const rootStore = useContext(RootStoreContext);
   const {
     createTool,
     editTool,
     submitting,
     loadTool,
-  } = toolStore;
+  } = rootStore.toolStore;
 
   const [tool, setTool] = useState(new ToolFormValues());
   const [loading, setLoading] = useState(false);

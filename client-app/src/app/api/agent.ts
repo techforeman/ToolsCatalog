@@ -1,9 +1,20 @@
+import { configure } from '@testing-library/react';
 import axios, {AxiosResponse } from 'axios'
+import { config } from 'process';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import { ITool } from '../models/tool';
+import { IUser, IUserFormValues } from '../models/user';
 
 axios.defaults.baseURL = 'https://localhost:5001/api';
+
+axios.interceptors.request.use((config) => {
+    const token = window.localStorage.getItem('jwt');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+}, error => {
+    return Promise.reject(error);
+})
 
 axios.interceptors.response.use(undefined, error => {
     if (error.message === 'Network Error' && !error.response)
@@ -11,7 +22,7 @@ axios.interceptors.response.use(undefined, error => {
         toast.error('Network Error  - server stop running');
     }
     const {status, data, config} = error.response;
-    if(error.response.status === 404)
+    if(status === 404)
     {
         history.push('/notfound')
     }
@@ -23,7 +34,8 @@ axios.interceptors.response.use(undefined, error => {
     {
         toast.error('Server error - please check terminal for more information about that issue.')
     }
-    throw error;
+    throw error.response;
+
 })
 
 const responseBody = (response: AxiosResponse) => response.data;
@@ -47,4 +59,10 @@ const Tools = {
     delete: (id: string) => requests.del(`/tools/${id}`)
 }
 
-export default ({Tools})
+const User = {
+    current: ():Promise<IUser> => requests.get('/user'),
+    login: (user: IUserFormValues): Promise<IUser> => requests.post('/user/login', user),
+    register: (user: IUserFormValues): Promise<IUser> => requests.post('/user/register', user),
+}
+
+export default ({Tools, User})

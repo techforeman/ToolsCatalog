@@ -1,28 +1,55 @@
-import { observer } from 'mobx-react-lite';
-import React from 'react'
-import { NavLink } from 'react-router-dom';
-import { Button, Container, Menu } from 'semantic-ui-react'
-
-
+import { observer } from "mobx-react-lite";
+import React, { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Button, Container, Dropdown, Image, Menu } from "semantic-ui-react";
+import { RootStoreContext } from "../../app/stores/rootStore";
 
 const NavBar: React.FC = () => {
-    return (
-        <Menu fixed="top" inverted>
-            <Container>
-                <Menu.Item header as={NavLink} exact to='/'>
-                    <img src="/assets/128_logo.png" alt = "logo" style={{marginRight:'10px'}}/>
-                    Tools Catalog
-                    </Menu.Item>
-                <Menu.Item
-                    name='Tools'
-                    as={NavLink} to='/tools'
+  const rootStore = useContext(RootStoreContext);
+  const { isLoggedIn, user, logout } = rootStore.userStore;
+  return (
+    <Menu fixed="top" inverted>
+      <Container>
+        <Menu.Item header as={NavLink} exact to="/">
+          <img
+            src="/assets/128_logo.png"
+            alt="logo"
+            style={{ marginRight: "10px" }}
+          />
+          Tools Catalog
+        </Menu.Item>
+        <Menu.Item name="Tools" as={NavLink} to="/tools" />
+        <Menu.Item>
+          <Button
+            as={NavLink}
+            to="/createTool"
+            positive
+            content="Create Tool"
+          />
+        </Menu.Item>
+        {user && (
+          <Menu.Item position="right">
+            <Image
+              avatar
+              spaced="right"
+              src={user!.image || "/assets/user.png"}
+            />
+            <Dropdown pointing="top left" text={user!.displayName}>
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  as={Link}
+                  to={`/profile/username`}
+                  text="My profile"
+                  icon="user"
                 />
-                <Menu.Item>
-                    <Button as={NavLink} to='/createTool' positive content="Create Tool" />
-                    </Menu.Item>
-            </Container>
-        </Menu>
-    )
-}
+                <Dropdown.Item onClick={logout} text="Logout" icon="power" />
+              </Dropdown.Menu>
+            </Dropdown>
+          </Menu.Item>
+        )}
+      </Container>
+    </Menu>
+  );
+};
 
-export default observer (NavBar)
+export default observer(NavBar);

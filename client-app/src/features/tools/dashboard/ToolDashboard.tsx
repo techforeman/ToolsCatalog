@@ -3,18 +3,19 @@ import { Grid } from "semantic-ui-react";
 import ToolList from "./ToolList";
 import { observer} from 'mobx-react-lite';
 import LoadingComponents from "../../../app/layout/LoadingComponents";
-import ToolStore from "../../../app/stores/toolStore";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 
 
 const ToolDashboard: React.FC = () => {
-  const toolStore = useContext(ToolStore);
+  const rootStore = useContext(RootStoreContext);
+  const {loadTools, loadingInitial} = rootStore.toolStore;
 
   useEffect(() => {
-    toolStore.loadTools();
-  }, [toolStore]);
+    loadTools();
+  }, [loadTools]);
 
-  if (toolStore.loadingInitial)
+  if (loadingInitial)
     return <LoadingComponents content="Loading tools..." />;
 
   return (

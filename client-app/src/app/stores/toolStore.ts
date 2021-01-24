@@ -4,26 +4,31 @@ import {
   action,
   makeObservable,
   computed,
-  configure,
   runInAction,
 } from "mobx";
-import { createContext, SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 import { toast } from "react-toastify";
 import { history } from "../..";
 import agent from "../api/agent";
 import { ITool } from "../models/tool";
+import { RootStore } from "./rootStore";
 
-configure({ enforceActions: "always" });
-class ToolStore {
+
+export default class ToolStore {
+  rootStore: RootStore;
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+    makeObservable(this);
+  }
+
+
   @observable toolRegistry = new Map();
   @observable tool: ITool | null = null;
   @observable loadingInitial = false;
   @observable submitting = false;
   @observable target = "";
 
-  constructor() {
-    makeObservable(this);
-  }
+  
 
   @computed get toolsByCreateOn() {
     return this.groupToolsByCreatedOnDate(Array.from(this.toolRegistry.values()));
@@ -152,4 +157,4 @@ class ToolStore {
   };
 }
 
-export default createContext(new ToolStore());
+
