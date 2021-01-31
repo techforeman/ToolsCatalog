@@ -1,9 +1,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistance;
 
 namespace Application.Tools
@@ -38,13 +40,17 @@ namespace Application.Tools
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context,  IUserAccessor userAccessor)
             {
                 _context = context;
+                _userAccessor = userAccessor;
             }
+            
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
+                
                 var tool = new Tool
                 {
                     Id = request.Id,
@@ -56,14 +62,28 @@ namespace Application.Tools
 
                 };
                 _context.Tools.Add(tool);
+
+                var user = await _context.Users.SingleOrDefaultAsync(u => u.UserName == _userAccessor.GetCurrentUsername());
+
+                var useBY = new UserTool
+                {
+                    AppUser = user,
+                    Tool = tool,
+                    IsAuthor = true,
+                    StartUseItOn = DateTime.Now
+                
+                };
+
+                _context.UserTools.Add(useBY);
+
                 var success = await _context.SaveChangesAsync() > 0;
-            
-                if(success) return Unit.Value;
+
+                if (success) return Unit.Value;
                 throw new Exception("Problem while saving changes");
             }
         }
 
-        
+
     }
 
 

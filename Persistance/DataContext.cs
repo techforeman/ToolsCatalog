@@ -13,6 +13,7 @@ namespace Persistance
 
         public DbSet<WeatherForecast> WeatherForecast {get; set;}
         public DbSet<Tool> Tools {get; set;}
+        public DbSet<UserTool> UserTools {get; set;}
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -25,6 +26,17 @@ namespace Persistance
                     new WeatherForecast{Id = 3, Date = System.DateTime.Parse("2020-01-14"), TemperatureC = 24, Summary = "Hot"  },
                     new WeatherForecast{Id = 4, Date = System.DateTime.Parse("2020-01-15"), TemperatureC = 29, Summary = "Hot"  }
                 );
+            builder.Entity<UserTool>(x => x.HasKey(ut => 
+            new {ut.AppUserId, ut.ToolId}));
+            builder.Entity<UserTool>()
+                .HasOne(u => u.AppUser)
+                .WithMany(t => t.UserTools)
+                .HasForeignKey(u => u.AppUserId);
+
+            builder.Entity<UserTool>()
+                .HasOne(t => t.Tool)
+                .WithMany(u => u.UserTools)
+                .HasForeignKey(t => t.ToolId);
         }
     }
 }
